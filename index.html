@@ -51,22 +51,26 @@ $.ajax({
 			for statusGroup in groupedStatuses
 				groupNumber++
 				if i[3] in statusGroup
-					$( "#column" + groupNumber ).append( "<div>"  + i[1] + ": " + i[2] + "</div> <hr>" )
+					# the javascript is just to have the issue details to open
+					# in a dedicated div to the right, cause the tiles are
+					# probably gonna get real small as we fit more boards
+					# in the page
+					$( "#column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" >"  + i[1] + ": " + i[2] + "</div> <hr>" )
 
 })
 
 </script>
 
-<div id="column1"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
-<div id="column2"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
-<div id="column3"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
-<div id="column4"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
-<div id="column5"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
-<div id="column6"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
-<div id="column7"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
-<div id="column8"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
-<div id="column9"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
-<div id="column10" onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
+<div id="column1"  style="float: left; width:100px"> </div>
+<div id="column2"  style="float: left; width:100px"> </div>
+<div id="column3"  style="float: left; width:100px"> </div>
+<div id="column4"  style="float: left; width:100px"> </div>
+<div id="column5"  style="float: left; width:100px"> </div>
+<div id="column6"  style="float: left; width:100px"> </div>
+<div id="column7"  style="float: left; width:100px"> </div>
+<div id="column8"  style="float: left; width:100px"> </div>
+<div id="column9"  style="float: left; width:100px"> </div>
+<div id="column10" style="float: left; width:100px"> </div>
 
 <div id="details" style="float: left; width:100px"> </div>
 
