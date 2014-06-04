@@ -7,8 +7,6 @@
 
 <script type="text/coffeescript">
 
-console.log "I am here"
-
 $.ajax({
 	type: 'GET',
 	url: './search/something.json',
@@ -17,15 +15,20 @@ $.ajax({
 		# debugger;
 		console.log JSON.stringify responseObject
 
+		# We are going to show the equivalent of a JIRA
+		# board. Just like JIRA boards, each column can
+		# group several statuses, so we model that here.
 		groupedStatuses = [
-			["Open"],
-			["Prioritised"],
-			["In Development"],
+			["Open"], # column 1
+			["Prioritised"], # column 2
+			["In Development"], # ...
 			["In Testing"],
 			["Fix soon"],
 			["Resolved", "Closed"]
 		]
 
+		# add the header in each column, in bold
+		# telling which statuses are grouped in it
 		groupNumber = 0
 		for statusGroup in groupedStatuses
 			groupNumber++
@@ -34,6 +37,13 @@ $.ajax({
 				header = header + eachStatus + " "
 			$( "#column" + groupNumber ).append( "<b>" + header + "<b>" )
 
+		# now add the issues in each column.
+		# for each result scan which group it
+		# belongs to, according to status, and
+		# place in the correct column.
+		# Probably not the most efficient way
+		# but it's not like we need to place hundreds
+		# of issues here, so it's OK
 		for i in responseObject.result
 			console.log i
 
@@ -48,15 +58,15 @@ $.ajax({
 </script>
 
 <div id="column1"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
-<div id="column2"  style="float: left; width:100px"> </div>
-<div id="column3"  style="float: left; width:100px"> </div>
-<div id="column4"  style="float: left; width:100px"> </div>
-<div id="column5"  style="float: left; width:100px"> </div>
-<div id="column6"  style="float: left; width:100px"> </div>
-<div id="column7"  style="float: left; width:100px"> </div>
-<div id="column8"  style="float: left; width:100px"> </div>
-<div id="column9"  style="float: left; width:100px"> </div>
-<div id="column10" style="float: left; width:100px"> </div>
+<div id="column2"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
+<div id="column3"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
+<div id="column4"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
+<div id="column5"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
+<div id="column6"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
+<div id="column7"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
+<div id="column8"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
+<div id="column9"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
+<div id="column10" onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
 
 <div id="details" style="float: left; width:100px"> </div>
 
