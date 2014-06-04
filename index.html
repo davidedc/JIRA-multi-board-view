@@ -1,0 +1,64 @@
+<html>
+<body>
+
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js"></script>
+
+
+<script type="text/coffeescript">
+
+console.log "I am here"
+
+$.ajax({
+	type: 'GET',
+	url: './search/something.json',
+	dataType: 'jsonp',
+	success: (responseObject) ->
+		# debugger;
+		console.log JSON.stringify responseObject
+
+		groupedStatuses = [
+			["Open"],
+			["Prioritised"],
+			["In Development"],
+			["In Testing"],
+			["Fix soon"],
+			["Resolved", "Closed"]
+		]
+
+		groupNumber = 0
+		for statusGroup in groupedStatuses
+			groupNumber++
+			header = ""
+			for eachStatus in statusGroup
+				header = header + eachStatus + " "
+			$( "#column" + groupNumber ).append( "<b>" + header + "<b>" )
+
+		for i in responseObject.result
+			console.log i
+
+			groupNumber = 0
+			for statusGroup in groupedStatuses
+				groupNumber++
+				if i[3] in statusGroup
+					$( "#column" + groupNumber ).append( "<div>"  + i[1] + ": " + i[2] + "</div> <hr>" )
+
+})
+
+</script>
+
+<div id="column1"  onmouseover="$('#details').text( $(this).text() );" style="float: left; width:100px"> </div>
+<div id="column2"  style="float: left; width:100px"> </div>
+<div id="column3"  style="float: left; width:100px"> </div>
+<div id="column4"  style="float: left; width:100px"> </div>
+<div id="column5"  style="float: left; width:100px"> </div>
+<div id="column6"  style="float: left; width:100px"> </div>
+<div id="column7"  style="float: left; width:100px"> </div>
+<div id="column8"  style="float: left; width:100px"> </div>
+<div id="column9"  style="float: left; width:100px"> </div>
+<div id="column10" style="float: left; width:100px"> </div>
+
+<div id="details" style="float: left; width:100px"> </div>
+
+</body>
+</html>
