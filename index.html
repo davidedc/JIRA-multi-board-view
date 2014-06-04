@@ -7,7 +7,7 @@
 
 <script type="text/coffeescript">
 
-$.ajax({
+$.ajax
 	type: 'GET',
 	url: './search/something.json',
 	dataType: 'jsonp',
@@ -57,7 +57,7 @@ $.ajax({
 					# in the page
 					$( "#column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" >"  + i[1] + ": " + i[2] + "</div> <hr>" )
 
-})
+
 
 </script>
 
