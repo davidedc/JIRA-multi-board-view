@@ -108,7 +108,7 @@ buildBoards = ->
 	for boardNumber in [0...boardNames.length]
 		theBoardName = boardNames[boardNumber]
 		console.log "adding board " + theBoardName
-		$( "#boards").append '<div id="board'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 2px solid;"> <div>' + theBoardName + '</div> </br> </div>'
+		$( "#boards").append '<div id="board'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 1px dotted;"> <div style = "background-color: #E0FFFF;">' + theBoardName + '</div> </br> </div>'
 		for columnNumber in [1...10]
 			console.log "adding column " + columnNumber + " to board " + theBoardName
 			$( "#board" + theBoardName).append '<div id="board'+theBoardName+'column'+columnNumber+'"  style="float: left; width:50px;"> </div>'
@@ -173,7 +173,7 @@ makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 							# in a dedicated div to the right, cause the tiles are
 							# probably gonna get real small as we fit more boards
 							# in the page
-							$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" >"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> <hr>" )
+							$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" style='background-color: #DCDCDC; padding: 3px; margin: 3px;'>"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> " )
 
 
 
