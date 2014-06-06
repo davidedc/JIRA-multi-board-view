@@ -19,13 +19,19 @@ $("input[name='epicgroup']").change ->
   	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-567 or "Epic Link" = SRM-568')
   return
 
-boardNames = ['SIO', 'SOA']
+
+# we gonna have several boards, we are
+# gonna put the project ID for each board in here
+boardNames = []
 
 # We are going to show the equivalent of a JIRA
 # board. Just like JIRA boards, each column can
-# group several statuses, so we model that here.
+# group several statuses, so we model that in this array.
 
 groupedStatuses = []
+
+
+boardNames.push 'SIO'
 groupedStatuses.push [
 	["Open"], # column 1
 	["Prioritised"], # column 2
@@ -35,6 +41,7 @@ groupedStatuses.push [
 	["Resolved", "Closed"]
 ]
 
+boardNames.push 'SOA'
 groupedStatuses.push [
 	["Open"], # column 1
 	["Prioritised"], # column 2
