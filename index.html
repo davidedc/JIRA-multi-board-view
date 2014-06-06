@@ -7,14 +7,16 @@
 
 <script type="text/coffeescript">
 
+
 #
 $("input[name='epicgroup']").change ->
-  if $("input[name='epicgroup']:checked").val() is "1"
+  selectedCheckbox = $("input[name='epicgroup']:checked").val()
+  if selectedCheckbox is "1"
   	console.log "selected checkbox 1"
-  	makeRequestAndUpdateBoard()
-  else if $("input[name='epicgroup']:checked").val() is "2"
-  	console.log "selected checkbox 1"
-  	makeRequestAndUpdateBoard()
+  	makeRequestAndUpdateBoard(selectedCheckbox)
+  else if selectedCheckbox is "2"
+  	console.log "selected checkbox 2"
+  	makeRequestAndUpdateBoard(selectedCheckbox)
   return
 
 clearBoards = ->
@@ -29,6 +31,7 @@ makeRequestAndUpdateBoard = (epicGroupNumber) ->
 		type: 'GET',
 		url: './search/something.json',
 		dataType: 'jsonp',
+		data: {'epicGroupNumber': epicGroupNumber},
 		success: (responseObject) ->
 			# debugger;
 			
