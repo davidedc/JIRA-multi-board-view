@@ -43,17 +43,29 @@ groupedStatuses.push [
 
 boardNames.push 'SOA'
 groupedStatuses.push [
-	["Open"], # column 1
-	["Prioritised"], # column 2
+	["Await Tech lead approval"], # column 1
+	["Awaiting Development"], # column 2
 	["In Development"], # ...
+	["Awaiting Testing"],
 	["In Testing"],
 	["Fix soon"],
+	["UAT"],
 	["Resolved", "Closed"]
+]
+
+boardNames.push 'AMP'
+groupedStatuses.push [
+	["Awaiting Review", "Work Blocked"], # column 1
+	["Open", "Reopened"], # column 2
+	["Awaiting Development"], # ...
+	["In Progress"],
+	["Awaiting Testing", "In Testing", "Testing Blocked]"],
+	["Resolved"]
 ]
 
 
 buildBoards = ->
-	for boardNumber in [0..1]
+	for boardNumber in [0...boardNames.length]
 		theBoardName = boardNames[boardNumber]
 		console.log "adding board " + theBoardName
 		$( "#boards").append '<div id="board'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 2px solid;"> <div>' + theBoardName + '</div> </br> </div>'
@@ -82,7 +94,7 @@ makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 			console.log JSON.stringify responseObject
 
 
-			for boardNumber in [0..1]
+			for boardNumber in [0...boardNames.length]
 				# add the header in each column, in bold
 				# telling which statuses are grouped in it
 				groupNumber = 0
