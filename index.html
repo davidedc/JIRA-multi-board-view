@@ -182,7 +182,7 @@ makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 							onClickCode = "onclick= \"openInFrame('"+issueKey+"');\""
 							#console.log onClickCode
 
-							$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" " + onClickCode + " style='background-color: #DCDCDC; padding: 3px; margin: 3px;'>"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> " )
+							$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" " + onClickCode + " style='cursor: pointer; background-color: #DCDCDC; padding: 3px; margin: 3px;'>"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> " )
 
 
 
