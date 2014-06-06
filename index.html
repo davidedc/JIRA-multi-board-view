@@ -17,9 +17,6 @@ $("input[name='epicgroup']").change ->
   else if selectedCheckbox is "2"
   	console.log "selected checkbox 2"
   	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-567 or "Epic Link" = SRM-568 or "Epic Link" = SRM-536 or "Epic Link" = SRM-570')
-  else if selectedCheckbox is "3"
-  	console.log "selected checkbox 3"
-  	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-488 or "Epic Link" = SRM-568')
   else if selectedCheckbox is "4"
   	console.log "selected checkbox 4"
   	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-291 or "Epic Link" = SRM-313')
@@ -187,7 +184,6 @@ Pick an epic group:
 <form action="">
 <input type="radio" name="epicgroup" value="1">ho scr<br>
 <input type="radio" name="epicgroup" value="2">con aw<br>
-<input type="radio" name="epicgroup" value="3">?<br>
 <input type="radio" name="epicgroup" value="4">int rd<br>
 <input type="radio" name="epicgroup" value="5">int sp<br>
 <input type="radio" name="epicgroup" value="6">sea ap<br>
