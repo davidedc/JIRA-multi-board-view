@@ -1,5 +1,5 @@
 <html>
-<body>
+<body style="font-family:'Verdana'">
 
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js"></script>
@@ -111,7 +111,7 @@ buildBoards = ->
 		$( "#boards").append '<div id="board'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 1px dotted; margin: 3px;"> <div style = "background-color: #E0FFFF;">' + theBoardName + '</div> </br> </div>'
 		for columnNumber in [1...10]
 			console.log "adding column " + columnNumber + " to board " + theBoardName
-			$( "#board" + theBoardName).append '<div id="board'+theBoardName+'column'+columnNumber+'"  style="float: left; width:50px;"> </div>'
+			$( "#board" + theBoardName).append '<div id="board'+theBoardName+'column'+columnNumber+'"  style="float: left; width:60px;"> </div>'
 
 clearBoards = ->
 	$( "#boards").empty()
@@ -188,6 +188,10 @@ makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 
 </script>
 
+<h1 style="text-align:center">Epic multiboard</h1>
+
+<hr>
+
 Pick an epic group:
 </br>
 <form action="">
@@ -199,14 +203,12 @@ Pick an epic group:
 <input type="radio" name="epicgroup" value="7">itu ing<br>
 <input type="radio" name="epicgroup" value="8">sir<br>
 </form>
-</br>
-
 <hr>
 
 <div id="boards">
 </div>
 
-<div id="details" style="float: left; width:100px; position:absolute ; right: 10%;"> </div>
+<div id="details" style="float: left; width:100px; position:absolute ; right: 2%;"> </div>
 
 </br>
 
