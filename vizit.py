@@ -44,9 +44,15 @@ class Proxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		try:
 			args = dict([x.split("=") for x in u.query.split("&")])
 			epicGroupNumber = args.get("epicGroupNumber","=")
+			search = args.get("search","=")
+			search = urllib.unquote(search).replace("+", " ")
 		except ValueError:
 			epicGroupNumber = 'no epicGroupNumber'
+			search = 'no Search'
+
+
 		print "received epicGroupNumber ", epicGroupNumber
+		print "received search ", search
 
 
 		if "favicon" in theFile:
@@ -59,7 +65,7 @@ class Proxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.send_response(200)
 			self.send_header('Content-type','application/json')
 			self.end_headers()
-
+			
 			searchResults = jira.search_issues('project = SIO AND "Epic Link" = SRM-488', maxResults=500)
 			issuesData = [[ issue.fields.project.key, issue.key, issue.fields.summary, issue.fields.status.name] for issue in searchResults]
 

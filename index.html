@@ -31,7 +31,7 @@ makeRequestAndUpdateBoard = (epicGroupNumber) ->
 		type: 'GET',
 		url: './search/something.json',
 		dataType: 'jsonp',
-		data: {'epicGroupNumber': epicGroupNumber},
+		data: {'epicGroupNumber': epicGroupNumber, 'search':'"Epic Link" = SRM-488 or "Epic Link" = SRM-499'},
 		success: (responseObject) ->
 			# debugger;
 			
