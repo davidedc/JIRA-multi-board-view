@@ -21,14 +21,37 @@ $("input[name='epicgroup']").change ->
 
 boardNames = ['SIO', 'SOA']
 
+# We are going to show the equivalent of a JIRA
+# board. Just like JIRA boards, each column can
+# group several statuses, so we model that here.
+
+groupedStatuses = []
+groupedStatuses.push [
+	["Open"], # column 1
+	["Prioritised"], # column 2
+	["In Development"], # ...
+	["In Testing"],
+	["Fix soon"],
+	["Resolved", "Closed"]
+]
+
+groupedStatuses.push [
+	["Open"], # column 1
+	["Prioritised"], # column 2
+	["In Development"], # ...
+	["In Testing"],
+	["Fix soon"],
+	["Resolved", "Closed"]
+]
+
 
 buildBoards = ->
 	for boardNumber in [0..1]
 		console.log "adding board " + boardNames[boardNumber]
-		$( "#boards").append '<div id="board'+boardNames[boardNumber]+'" style="font-size:8px"></div>'
+		$( "#boards").append '<div id="board'+boardNames[boardNumber]+'" style="float: left; overflow: hidden; font-size:8px; border: 2px solid;"></div>'
 		for columnNumber in [1...10]
 			console.log "adding column " + columnNumber + " to board " + boardNames[boardNumber]
-			$( "#board" + boardNames[boardNumber]).append '<div id="board'+boardNames[boardNumber]+'column'+columnNumber+'"  style="float: left; width:50px"> </div>'
+			$( "#board" + boardNames[boardNumber]).append '<div id="board'+boardNames[boardNumber]+'column'+columnNumber+'"  style="float: left; width:50px;"> </div>'
 
 clearBoards = ->
 	$( "#boards").empty()
@@ -49,47 +72,42 @@ makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 			
 			console.log JSON.stringify responseObject
 
-			# We are going to show the equivalent of a JIRA
-			# board. Just like JIRA boards, each column can
-			# group several statuses, so we model that here.
-			groupedStatuses = [
-				["Open"], # column 1
-				["Prioritised"], # column 2
-				["In Development"], # ...
-				["In Testing"],
-				["Fix soon"],
-				["Resolved", "Closed"]
-			]
 
-			# add the header in each column, in bold
-			# telling which statuses are grouped in it
-			groupNumber = 0
-			for statusGroup in groupedStatuses
-				groupNumber++
-				header = ""
-				for eachStatus in statusGroup
-					header = header + eachStatus + " "
-				$( "#boardSIOcolumn" + groupNumber ).append( "<b>" + header + "<b>" )
-
-			# now add the issues in each column.
-			# for each result scan which group it
-			# belongs to, according to status, and
-			# place in the correct column.
-			# Probably not the most efficient way
-			# but it's not like we need to place hundreds
-			# of issues here, so it's OK
-			for i in responseObject.result
-				console.log i
-
+			for boardNumber in [0..1]
+				# add the header in each column, in bold
+				# telling which statuses are grouped in it
 				groupNumber = 0
-				for statusGroup in groupedStatuses
+				for statusGroup in groupedStatuses[boardNumber]
 					groupNumber++
-					if i[3] in statusGroup
-						# the javascript is just to have the issue details to open
-						# in a dedicated div to the right, cause the tiles are
-						# probably gonna get real small as we fit more boards
-						# in the page
-						$( "#boardSIOcolumn" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" >"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> <hr>" )
+					header = ""
+					for eachStatus in statusGroup
+						header = header + eachStatus + " "
+					$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<b>" + header + "<b>" )
+
+				# now add the issues in each column.
+				# for each issue in the result set, scan whether
+				# it belongs to the board, which group it
+				# belongs to, according to status, and
+				# place in the correct column.
+				# DEFINITELY not the most efficient way
+				# but it's not like we need to place hundreds
+				# of issues here, so it's OK
+				for i in responseObject.result
+					console.log i
+					project = i[1].substring(0, 3)
+					console.log "project: " + project
+					if project != boardNames[boardNumber]
+						continue;
+
+					groupNumber = 0
+					for statusGroup in groupedStatuses[boardNumber]
+						groupNumber++
+						if i[3] in statusGroup
+							# the javascript is just to have the issue details to open
+							# in a dedicated div to the right, cause the tiles are
+							# probably gonna get real small as we fit more boards
+							# in the page
+							$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" >"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> <hr>" )
 
 
 
