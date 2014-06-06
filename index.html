@@ -7,55 +7,76 @@
 
 <script type="text/coffeescript">
 
-$.ajax
-	type: 'GET',
-	url: './search/something.json',
-	dataType: 'jsonp',
-	success: (responseObject) ->
-		# debugger;
-		console.log JSON.stringify responseObject
+#
+$("input[name='epicgroup']").change ->
+  if $("input[name='epicgroup']:checked").val() is "1"
+  	console.log "selected checkbox 1"
+  	makeRequestAndUpdateBoard()
+  else if $("input[name='epicgroup']:checked").val() is "2"
+  	console.log "selected checkbox 1"
+  	makeRequestAndUpdateBoard()
+  return
 
-		# We are going to show the equivalent of a JIRA
-		# board. Just like JIRA boards, each column can
-		# group several statuses, so we model that here.
-		groupedStatuses = [
-			["Open"], # column 1
-			["Prioritised"], # column 2
-			["In Development"], # ...
-			["In Testing"],
-			["Fix soon"],
-			["Resolved", "Closed"]
-		]
+clearBoards = ->
+	for columnNumber in [1...10]
+		$( "#column" + columnNumber ).empty()
+	$( "#details").empty()
 
-		# add the header in each column, in bold
-		# telling which statuses are grouped in it
-		groupNumber = 0
-		for statusGroup in groupedStatuses
-			groupNumber++
-			header = ""
-			for eachStatus in statusGroup
-				header = header + eachStatus + " "
-			$( "#column" + groupNumber ).append( "<b>" + header + "<b>" )
 
-		# now add the issues in each column.
-		# for each result scan which group it
-		# belongs to, according to status, and
-		# place in the correct column.
-		# Probably not the most efficient way
-		# but it's not like we need to place hundreds
-		# of issues here, so it's OK
-		for i in responseObject.result
-			console.log i
+makeRequestAndUpdateBoard = (epicGroupNumber) ->
 
+	$.ajax
+		type: 'GET',
+		url: './search/something.json',
+		dataType: 'jsonp',
+		success: (responseObject) ->
+			# debugger;
+			
+			clearBoards()
+			
+			console.log JSON.stringify responseObject
+
+			# We are going to show the equivalent of a JIRA
+			# board. Just like JIRA boards, each column can
+			# group several statuses, so we model that here.
+			groupedStatuses = [
+				["Open"], # column 1
+				["Prioritised"], # column 2
+				["In Development"], # ...
+				["In Testing"],
+				["Fix soon"],
+				["Resolved", "Closed"]
+			]
+
+			# add the header in each column, in bold
+			# telling which statuses are grouped in it
 			groupNumber = 0
 			for statusGroup in groupedStatuses
 				groupNumber++
-				if i[3] in statusGroup
-					# the javascript is just to have the issue details to open
-					# in a dedicated div to the right, cause the tiles are
-					# probably gonna get real small as we fit more boards
-					# in the page
-					$( "#column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" >"  + i[1] + ": " + i[2] + "</div> <hr>" )
+				header = ""
+				for eachStatus in statusGroup
+					header = header + eachStatus + " "
+				$( "#column" + groupNumber ).append( "<b>" + header + "<b>" )
+
+			# now add the issues in each column.
+			# for each result scan which group it
+			# belongs to, according to status, and
+			# place in the correct column.
+			# Probably not the most efficient way
+			# but it's not like we need to place hundreds
+			# of issues here, so it's OK
+			for i in responseObject.result
+				console.log i
+
+				groupNumber = 0
+				for statusGroup in groupedStatuses
+					groupNumber++
+					if i[3] in statusGroup
+						# the javascript is just to have the issue details to open
+						# in a dedicated div to the right, cause the tiles are
+						# probably gonna get real small as we fit more boards
+						# in the page
+						$( "#column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" >"  + i[1] + ": " + i[2] + "</div> <hr>" )
 
 
 
