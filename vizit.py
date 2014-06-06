@@ -7,6 +7,7 @@
 import SocketServer
 import SimpleHTTPServer
 import urllib
+from urlparse import urlparse
 
 # for grokking the arguments coming from the command line
 import sys
@@ -36,6 +37,18 @@ class Proxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		theFile = self.path
 		theFile = theFile[1:] # first character is a slash, we take that away
 		print "requested ", self.path
+
+		u =urlparse(self.path)
+		print "parsed URL: " + str(u)
+
+		try:
+			args = dict([x.split("=") for x in u.query.split("&")])
+			epicGroupNumber = args.get("epicGroupNumber","=")
+		except ValueError:
+			epicGroupNumber = 'no epicGroupNumber'
+		print "received epicGroupNumber ", epicGroupNumber
+
+
 		if "favicon" in theFile:
 			print ""
 		elif "search" in theFile:
