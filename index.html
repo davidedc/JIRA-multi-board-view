@@ -13,10 +13,10 @@ $("input[name='epicgroup']").change ->
   selectedCheckbox = $("input[name='epicgroup']:checked").val()
   if selectedCheckbox is "1"
   	console.log "selected checkbox 1"
-  	makeRequestAndUpdateBoard(selectedCheckbox)
+  	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-488 or "Epic Link" = SRM-499')
   else if selectedCheckbox is "2"
   	console.log "selected checkbox 2"
-  	makeRequestAndUpdateBoard(selectedCheckbox)
+  	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-567 or "Epic Link" = SRM-568')
   return
 
 clearBoards = ->
@@ -25,13 +25,13 @@ clearBoards = ->
 	$( "#details").empty()
 
 
-makeRequestAndUpdateBoard = (epicGroupNumber) ->
+makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 
 	$.ajax
 		type: 'GET',
 		url: './search/something.json',
 		dataType: 'jsonp',
-		data: {'epicGroupNumber': epicGroupNumber, 'search':'"Epic Link" = SRM-488 or "Epic Link" = SRM-499'},
+		data: {'epicGroupNumber': epicGroupNumber, 'search':searchQuery},
 		success: (responseObject) ->
 			# debugger;
 			

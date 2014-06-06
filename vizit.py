@@ -66,7 +66,7 @@ class Proxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.send_header('Content-type','application/json')
 			self.end_headers()
 			
-			searchResults = jira.search_issues('project = SIO AND "Epic Link" = SRM-488', maxResults=500)
+			searchResults = jira.search_issues(search, maxResults=500)
 			issuesData = [[ issue.fields.project.key, issue.key, issue.fields.summary, issue.fields.status.name] for issue in searchResults]
 
 			JSONOfIssues = json.dumps(issuesData)
