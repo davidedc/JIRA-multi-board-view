@@ -19,10 +19,19 @@ $("input[name='epicgroup']").change ->
   	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-567 or "Epic Link" = SRM-568')
   return
 
+boardNames = ['SIO', 'SOA']
+
+
+buildBoards = ->
+	for boardNumber in [0..1]
+		console.log "adding board " + boardNames[boardNumber]
+		$( "#boards").append '<div id="board'+boardNames[boardNumber]+'" style="font-size:8px"></div>'
+		for columnNumber in [1...10]
+			console.log "adding column " + columnNumber + " to board " + boardNames[boardNumber]
+			$( "#board" + boardNames[boardNumber]).append '<div id="board'+boardNames[boardNumber]+'column'+columnNumber+'"  style="float: left; width:50px"> </div>'
+
 clearBoards = ->
-	for columnNumber in [1...10]
-		$( "#column" + columnNumber ).empty()
-	$( "#details").empty()
+	$( "#boards").empty()
 
 
 makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
@@ -36,6 +45,7 @@ makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 			# debugger;
 			
 			clearBoards()
+			buildBoards()
 			
 			console.log JSON.stringify responseObject
 
@@ -59,7 +69,7 @@ makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 				header = ""
 				for eachStatus in statusGroup
 					header = header + eachStatus + " "
-				$( "#column" + groupNumber ).append( "<b>" + header + "<b>" )
+				$( "#boardSIOcolumn" + groupNumber ).append( "<b>" + header + "<b>" )
 
 			# now add the issues in each column.
 			# for each result scan which group it
@@ -79,7 +89,7 @@ makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 						# in a dedicated div to the right, cause the tiles are
 						# probably gonna get real small as we fit more boards
 						# in the page
-						$( "#column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" >"  + i[1] + ": " + i[2] + "</div> <hr>" )
+						$( "#boardSIOcolumn" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" >"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> <hr>" )
 
 
 
@@ -95,16 +105,8 @@ Pick an epic group:
 
 <hr>
 
-<div id="column1"  style="float: left; width:100px"> </div>
-<div id="column2"  style="float: left; width:100px"> </div>
-<div id="column3"  style="float: left; width:100px"> </div>
-<div id="column4"  style="float: left; width:100px"> </div>
-<div id="column5"  style="float: left; width:100px"> </div>
-<div id="column6"  style="float: left; width:100px"> </div>
-<div id="column7"  style="float: left; width:100px"> </div>
-<div id="column8"  style="float: left; width:100px"> </div>
-<div id="column9"  style="float: left; width:100px"> </div>
-<div id="column10" style="float: left; width:100px"> </div>
+<div id="boards">
+</div>
 
 <div id="details" style="float: left; width:100px"> </div>
 
