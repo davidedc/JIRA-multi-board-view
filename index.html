@@ -133,6 +133,9 @@ makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 			
 			console.log JSON.stringify responseObject
 
+			window.openInFrame = (theIssueKey) ->
+				$('#JIRAIframe').empty()
+				$('#JIRAIframe').append("<iframe width='100%' height='800' src='https://jira.shazamteam.net/browse/"+theIssueKey+"'></iframe>")
 
 			for boardNumber in [0...boardNames.length]
 				# add the header in each column, in bold
@@ -173,7 +176,13 @@ makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 							# in a dedicated div to the right, cause the tiles are
 							# probably gonna get real small as we fit more boards
 							# in the page
-							$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" style='background-color: #DCDCDC; padding: 3px; margin: 3px;'>"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> " )
+
+							issueKey = i[1]
+							console.log issueKey
+							onClickCode = "onclick= \"openInFrame('"+issueKey+"');\""
+							#console.log onClickCode
+
+							$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" " + onClickCode + " style='background-color: #DCDCDC; padding: 3px; margin: 3px;'>"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> " )
 
 
 
@@ -198,6 +207,11 @@ Pick an epic group:
 </div>
 
 <div id="details" style="float: left; width:100px"> </div>
+
+</br>
+
+<div id="JIRAIframe" style="width:90%">
+</div>
 
 </body>
 </html>
