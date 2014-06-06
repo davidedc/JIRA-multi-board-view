@@ -97,6 +97,11 @@ makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 				# belongs to, according to status, and
 				# place in the correct column.
 				# DEFINITELY not the most efficient way
+				# as we scan each issue as many times
+				# as there is a board.
+				# The good news is that would work also
+				# in case where the same issue would appear in more
+				# than one board.
 				# but it's not like we need to place hundreds
 				# of issues here, so it's OK
 				for i in responseObject.result
