@@ -54,11 +54,12 @@ groupedStatuses.push [
 
 buildBoards = ->
 	for boardNumber in [0..1]
-		console.log "adding board " + boardNames[boardNumber]
-		$( "#boards").append '<div id="board'+boardNames[boardNumber]+'" style="float: left; overflow: hidden; font-size:8px; border: 2px solid;"></div>'
+		theBoardName = boardNames[boardNumber]
+		console.log "adding board " + theBoardName
+		$( "#boards").append '<div id="board'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 2px solid;"> <div>' + theBoardName + '</div> </br> </div>'
 		for columnNumber in [1...10]
-			console.log "adding column " + columnNumber + " to board " + boardNames[boardNumber]
-			$( "#board" + boardNames[boardNumber]).append '<div id="board'+boardNames[boardNumber]+'column'+columnNumber+'"  style="float: left; width:50px;"> </div>'
+			console.log "adding column " + columnNumber + " to board " + theBoardName
+			$( "#board" + theBoardName).append '<div id="board'+theBoardName+'column'+columnNumber+'"  style="float: left; width:50px;"> </div>'
 
 clearBoards = ->
 	$( "#boards").empty()
