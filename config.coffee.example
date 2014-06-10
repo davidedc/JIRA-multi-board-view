@@ -1,0 +1,87 @@
+## This is just an example configuration.
+## Just changes the epic groups belows and the
+## queries and rename the file to
+## config.coffee
+
+# we gonna have several boards, we are
+# gonna put the project ID for each board in here
+window.boardNames = []
+
+# We are going to show the equivalent of a JIRA
+# board. Just like JIRA boards, each column can
+# group several statuses, so we model that in this array.
+
+window.groupedStatuses = []
+
+# This is the list of epic groups.
+# you can choose to analyse/visualise
+# one at a time.
+# Note that each epic group can be made
+# out of several epics.
+window.epicGroupsWithQuery = []
+
+epicGroupsWithQuery.push ['My big epic 1', '"Epic Link" = SRM-488 or "Epic Link" = SRM-499 or "Epic Link" = SRM-537']
+epicGroupsWithQuery.push ['My big epic 2', '"Epic Link" = SRM-567 or "Epic Link" = SRM-568 or "Epic Link" = SRM-536 or "Epic Link" = SRM-570']
+epicGroupsWithQuery.push ['My big epic 3', '"Epic Link" = SRM-291 or "Epic Link" = SRM-313']
+epicGroupsWithQuery.push ['My big epic 4', '"Epic Link" = SRM-491 or "Epic Link" = SRM-506']
+epicGroupsWithQuery.push ['My big epic 5', '"Epic Link" = SRM-463']
+epicGroupsWithQuery.push ['My big epic 6', '"Epic Link" = SRM-588 or "Epic Link" = SRM-586 or "Epic Link" = SRM-587']
+epicGroupsWithQuery.push ['My big epic 7', '"Epic Link" = SRM-591 or "Epic Link" = SRM-592']
+
+
+boardNames.push 'SIO'
+groupedStatuses.push [
+	["Open"], # column 1
+	["Prioritised"], # column 2
+	["In Development"], # ...
+	["In Testing"],
+	["Fix soon"],
+	["Resolved", "Closed"]
+]
+
+boardNames.push 'SOA'
+groupedStatuses.push [
+	["Await Tech lead approval"], # column 1
+	["Awaiting Development"], # column 2
+	["In Development"], # ...
+	["Awaiting Testing"],
+	["In Testing"],
+	["Fix soon"],
+	["UAT"],
+	["Resolved", "Closed"]
+]
+
+boardNames.push 'AMP'
+groupedStatuses.push [
+	["Awaiting Review", "Work Blocked"], # column 1
+	["Open", "Reopened"], # column 2
+	["Awaiting Development"], # ...
+	["In Progress"],
+	["Awaiting Testing", "In Testing", "Testing Blocked"],
+	["Resolved"]
+]
+
+boardNames.push 'WPS'
+groupedStatuses.push [
+	["Await Tech lead approval"], # column 1
+	["Awaiting Development", "Open", "Prioritised"], # column 2
+	["In Development", "In Progress"], # ...
+	["In Progress"],
+	["Available for code review"],
+	["Code Review"],
+	["Travelling to Beta"],
+	["Awaiting Testing"],
+	["In Testing"],
+	["Awaiting Triage"],
+	["Fix soon"],
+	["UAT"],
+	["Resolved", "Closed"]	
+]
+
+boardNames.push 'SSP'
+groupedStatuses.push [
+	["Committed items"], # column 1
+	["Work Blocked"], # column 2
+	["In Progress"], # ...
+	["Resolved"]	
+]

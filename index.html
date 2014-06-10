@@ -2,106 +2,10 @@
 <body style="font-family:'Verdana'">
 
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js"></script>
 
+<script type="text/coffeescript" src="config.coffee"></script>
 
 <script type="text/coffeescript">
-
-
-#
-$("input[name='epicgroup']").change ->
-  selectedCheckbox = $("input[name='epicgroup']:checked").val()
-  if selectedCheckbox is "1"
-  	console.log "selected checkbox 1"
-  	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-488 or "Epic Link" = SRM-499 or "Epic Link" = SRM-537')
-  else if selectedCheckbox is "2"
-  	console.log "selected checkbox 2"
-  	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-567 or "Epic Link" = SRM-568 or "Epic Link" = SRM-536 or "Epic Link" = SRM-570')
-  else if selectedCheckbox is "4"
-  	console.log "selected checkbox 4"
-  	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-291 or "Epic Link" = SRM-313')
-  else if selectedCheckbox is "5"
-  	console.log "selected checkbox 5"
-  	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-491 or "Epic Link" = SRM-506')
-  else if selectedCheckbox is "6"
-  	console.log "selected checkbox 6"
-  	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-463')
-  else if selectedCheckbox is "7"
-  	console.log "selected checkbox 7"
-  	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-588 or "Epic Link" = SRM-586 or "Epic Link" = SRM-587')
-  else if selectedCheckbox is "8"
-  	console.log "selected checkbox 8"
-  	makeRequestAndUpdateBoard(selectedCheckbox, '"Epic Link" = SRM-591 or "Epic Link" = SRM-592')
-  return
-
-
-# we gonna have several boards, we are
-# gonna put the project ID for each board in here
-boardNames = []
-
-# We are going to show the equivalent of a JIRA
-# board. Just like JIRA boards, each column can
-# group several statuses, so we model that in this array.
-
-groupedStatuses = []
-
-
-boardNames.push 'SIO'
-groupedStatuses.push [
-	["Open"], # column 1
-	["Prioritised"], # column 2
-	["In Development"], # ...
-	["In Testing"],
-	["Fix soon"],
-	["Resolved", "Closed"]
-]
-
-boardNames.push 'SOA'
-groupedStatuses.push [
-	["Await Tech lead approval"], # column 1
-	["Awaiting Development"], # column 2
-	["In Development"], # ...
-	["Awaiting Testing"],
-	["In Testing"],
-	["Fix soon"],
-	["UAT"],
-	["Resolved", "Closed"]
-]
-
-boardNames.push 'AMP'
-groupedStatuses.push [
-	["Awaiting Review", "Work Blocked"], # column 1
-	["Open", "Reopened"], # column 2
-	["Awaiting Development"], # ...
-	["In Progress"],
-	["Awaiting Testing", "In Testing", "Testing Blocked"],
-	["Resolved"]
-]
-
-boardNames.push 'WPS'
-groupedStatuses.push [
-	["Await Tech lead approval"], # column 1
-	["Awaiting Development", "Open", "Prioritised"], # column 2
-	["In Development", "In Progress"], # ...
-	["In Progress"],
-	["Available for code review"],
-	["Code Review"],
-	["Travelling to Beta"],
-	["Awaiting Testing"],
-	["In Testing"],
-	["Awaiting Triage"],
-	["Fix soon"],
-	["UAT"],
-	["Resolved", "Closed"]	
-]
-
-boardNames.push 'SSP'
-groupedStatuses.push [
-	["Committed items"], # column 1
-	["Work Blocked"], # column 2
-	["In Progress"], # ...
-	["Resolved"]	
-]
 
 
 buildBoards = ->
@@ -118,7 +22,7 @@ clearBoards = ->
 	$( "#details").empty()
 
 
-makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
+window.makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 
 	$.ajax
 		type: 'GET',
@@ -194,15 +98,32 @@ makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
 
 Pick an epic group:
 </br>
-<form action="">
-<input type="radio" name="epicgroup" value="1">ho scr<br>
-<input type="radio" name="epicgroup" value="2">con aw<br>
-<input type="radio" name="epicgroup" value="4">int rd<br>
-<input type="radio" name="epicgroup" value="5">int sp<br>
-<input type="radio" name="epicgroup" value="6">sea ap<br>
-<input type="radio" name="epicgroup" value="7">itu ing<br>
-<input type="radio" name="epicgroup" value="8">sir<br>
+<form action="" id="epicGroupsForm">
 </form>
+
+<script type="text/coffeescript">
+
+console.log 'adding inputs to form'
+
+inputCount = 0
+for epicGroupWithQuery in epicGroupsWithQuery
+	inputCount++
+	console.log epicGroupWithQuery[0]
+	checkbox = $('<input>').attr({
+	    type: 'radio',
+	    name: 'epicgroup',
+	    value: inputCount,
+	    text: epicGroupWithQuery[0]
+	}).appendTo('#epicGroupsForm');
+	checkbox.after(epicGroupWithQuery[0] + '  |  ')
+
+$("input[name='epicgroup']").change ->
+  selectedCheckbox = $("input[name='epicgroup']:checked").val()
+  console.log "some checkbox changed: " + selectedCheckbox
+  makeRequestAndUpdateBoard(selectedCheckbox, epicGroupsWithQuery[parseInt(selectedCheckbox)-1][1])
+
+</script>
+
 <hr>
 
 <div id="boards">
@@ -214,6 +135,8 @@ Pick an epic group:
 
 <div id="JIRAIframe" style="width:90%">
 </div>
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js"></script>
 
 </body>
 </html>

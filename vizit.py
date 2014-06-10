@@ -65,7 +65,7 @@ class Proxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.send_response(200)
 			self.send_header('Content-type','application/json')
 			self.end_headers()
-			
+
 			searchResults = jira.search_issues(search, maxResults=500)
 			issuesData = [[ issue.fields.project.key, issue.key, issue.fields.summary, issue.fields.status.name] for issue in searchResults]
 
@@ -75,7 +75,7 @@ class Proxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 			self.wfile.write(callbackName + "({result: " + JSONOfIssues + "})")
 
-		elif "index" in theFile:
+		elif "index" in theFile or ".coffee" in theFile:
 			# next three lines only needed for Firefox
 			self.send_response(200)
 			self.send_header('Content-type','text/html')
