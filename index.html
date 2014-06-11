@@ -3,6 +3,25 @@
 
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 
+<script type="text/coffeescript">
+# we gonna have several boards, we are
+# gonna put the project ID for each board in here
+window.boardNames = []
+
+# We are going to show the equivalent of a JIRA
+# board. Just like JIRA boards, each column can
+# group several statuses, so we model that in this array.
+
+window.groupedStatuses = []
+
+# This is the list of epic groups.
+# you can choose to analyse/visualise
+# one at a time.
+# Note that each epic group can be made
+# out of several epics.
+window.epicGroupsWithQuery = []
+</script>
+
 <script type="text/coffeescript" src="config.coffee"></script>
 
 <script type="text/coffeescript">
