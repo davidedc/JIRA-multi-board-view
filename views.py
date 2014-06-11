@@ -7,9 +7,12 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import loader, RequestContext
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden,\
     HttpResponseBadRequest, HttpResponseNotFound, Http404
+from django.conf import settings
 
 from jira.config import get_jira
 from jira.exceptions import JIRAError
+
+from jira_analysis.JIRA_multi_board_view.models import BoardDefinition, EpicDefinition
 
 log = logging.getLogger(__name__)
 
@@ -27,7 +30,6 @@ def search(request):
         callback_name = request.GET["callback"]
     except KeyError:
        return HttpResponseBadRequest("some parameters missing")
-
     try:
         search_results = JIRA.search_issues(jql, maxResults=500) 
     except JIRAError, e:
@@ -40,3 +42,19 @@ def search(request):
         issue.fields.status.name) for issue in search_results
     ]
     return HttpResponse(callback_name + "({result: " + json.dumps(issues_data) + "})")
+
+
+def config(request):
+    config = ""
+    for epic in EpicDefinition.objects.all():
+        config += "epicGroupsWithQuery.push ['{0}', '{1}']\n".format(epic.name, epic.jql)
+    for board in BoardDefinition.objects.all():
+        config += "boardNames.push '{0}'\n".format(board.name)
+        config += "groupedStatuses.push ["
+        for column in board.statuses.split('|'):
+            config += "["
+            for status in column.split(','):
+                config += "'{0}',".format(status.strip())
+            config += "],"
+        config += "]\n"
+    return HttpResponse(config, "text/coffeescript")
