@@ -51,73 +51,74 @@ clearBoards = ->
 	$( "#boards").empty()
 	$( "#details").empty()
 
+window.updateBoard = (responseObject) ->
+	clearBoards()
+	buildBoards()
+	
+	console.log JSON.stringify responseObject
 
-window.makeRequestAndUpdateBoard = (epicGroupNumber, searchQuery) ->
+	window.openInFrame = (theIssueKey) ->
+		$('#JIRAIframe').empty()
+		$('#JIRAIframe').append("<iframe width='100%' height='800' src='https://jira.shazamteam.net/browse/"+theIssueKey+"'></iframe>")
+
+	for boardNumber in [0...boardNames.length]
+		# add the header in each column, in bold
+		# telling which statuses are grouped in it
+		groupNumber = 0
+		for statusGroup in groupedStatuses[boardNumber]
+			groupNumber++
+			header = ""
+			for eachStatus in statusGroup
+				header = header + eachStatus + " "
+			$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<b>" + header + "<b>" )
+
+		# now add the issues in each column.
+		# for each issue in the result set, scan whether
+		# it belongs to the board, which group it
+		# belongs to, according to status, and
+		# place in the correct column.
+		# DEFINITELY not the most efficient way
+		# as we scan each issue as many times
+		# as there is a board.
+		# The good news is that would work also
+		# in case where the same issue would appear in more
+		# than one board.
+		# but it's not like we need to place hundreds
+		# of issues here, so it's OK
+		for i in responseObject.result
+			project = i[1].substring(0, 3)
+			console.log "project: " + project
+			if project != boardNames[boardNumber]
+				continue;
+
+			groupNumber = 0
+			for statusGroup in groupedStatuses[boardNumber]
+				groupNumber++
+				if i[3] in statusGroup
+					# the javascript is just to have the issue details to open
+					# in a dedicated div to the right, cause the tiles are
+					# probably gonna get real small as we fit more boards
+					# in the page
+
+					issueKey = i[1]
+					#console.log issueKey
+					onClickCode = "onclick= \"openInFrame('"+issueKey+"');\""
+					#console.log onClickCode
+
+					$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" " + onClickCode + " style='cursor: pointer; background-color: #DCDCDC; padding: 3px; margin: 3px;'>"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> " )
+
+
+
+window.makeEpicGroupQuery = (searchQuery) ->
 
 	$.ajax
 		type: 'GET',
 		url: './search/something.json',
 		dataType: 'jsonp',
-		data: {'epicGroupNumber': epicGroupNumber, 'search':searchQuery},
+		data: {'search':searchQuery},
 		success: (responseObject) ->
 			# debugger;
-			
-			clearBoards()
-			buildBoards()
-			
-			console.log JSON.stringify responseObject
-
-			window.openInFrame = (theIssueKey) ->
-				$('#JIRAIframe').empty()
-				$('#JIRAIframe').append("<iframe width='100%' height='800' src='https://jira.shazamteam.net/browse/"+theIssueKey+"'></iframe>")
-
-			for boardNumber in [0...boardNames.length]
-				# add the header in each column, in bold
-				# telling which statuses are grouped in it
-				groupNumber = 0
-				for statusGroup in groupedStatuses[boardNumber]
-					groupNumber++
-					header = ""
-					for eachStatus in statusGroup
-						header = header + eachStatus + " "
-					$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<b>" + header + "<b>" )
-
-				# now add the issues in each column.
-				# for each issue in the result set, scan whether
-				# it belongs to the board, which group it
-				# belongs to, according to status, and
-				# place in the correct column.
-				# DEFINITELY not the most efficient way
-				# as we scan each issue as many times
-				# as there is a board.
-				# The good news is that would work also
-				# in case where the same issue would appear in more
-				# than one board.
-				# but it's not like we need to place hundreds
-				# of issues here, so it's OK
-				for i in responseObject.result
-					console.log i
-					project = i[1].substring(0, 3)
-					console.log "project: " + project
-					if project != boardNames[boardNumber]
-						continue;
-
-					groupNumber = 0
-					for statusGroup in groupedStatuses[boardNumber]
-						groupNumber++
-						if i[3] in statusGroup
-							# the javascript is just to have the issue details to open
-							# in a dedicated div to the right, cause the tiles are
-							# probably gonna get real small as we fit more boards
-							# in the page
-
-							issueKey = i[1]
-							console.log issueKey
-							onClickCode = "onclick= \"openInFrame('"+issueKey+"');\""
-							#console.log onClickCode
-
-							$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" " + onClickCode + " style='cursor: pointer; background-color: #DCDCDC; padding: 3px; margin: 3px;'>"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> " )
-
+			window.updateBoard(responseObject)
 
 
 </script>
@@ -150,7 +151,7 @@ for epicGroupWithQuery in epicGroupsWithQuery
 $("input[name='epicgroup']").change ->
   selectedCheckbox = $("input[name='epicgroup']:checked").val()
   console.log "some checkbox changed: " + selectedCheckbox
-  makeRequestAndUpdateBoard(selectedCheckbox, epicGroupsWithQuery[parseInt(selectedCheckbox)-1][1])
+  makeEpicGroupQuery(epicGroupsWithQuery[parseInt(selectedCheckbox)-1][1])
 
 </script>
 

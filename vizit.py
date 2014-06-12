@@ -43,15 +43,12 @@ class Proxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 		try:
 			args = dict([x.split("=") for x in u.query.split("&")])
-			epicGroupNumber = args.get("epicGroupNumber","=")
 			search = args.get("search","=")
 			search = urllib.unquote(search).replace("+", " ")
 		except ValueError:
-			epicGroupNumber = 'no epicGroupNumber'
 			search = 'no Search'
 
 
-		print "received epicGroupNumber ", epicGroupNumber
 		print "received search ", search
 
 
