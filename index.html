@@ -26,6 +26,17 @@ window.epicGroupsWithQuery = []
 
 <script type="text/coffeescript">
 
+# we ll have some asynchronous operations
+# going on soon so we want to keep track of
+# what state the client is in.
+window.STATE_READY_FOR_NEW_EPIC_SELECTION = 0
+window.STATE_CREATING_EMPTY_BOARDS = 1
+window.STATE_WAITING_FOR_EPIC_QUERY_RESULTS = 2
+window.STATE_WAITING_FOR_TABLE_QUERIES_RESULTS = 3
+window.STATE_POPULATING_TABLES = 4
+
+window.STATE = STATE_READY_FOR_NEW_EPIC_SELECTION
+
 
 buildBoards = ->
 	for boardNumber in [0...boardNames.length]
