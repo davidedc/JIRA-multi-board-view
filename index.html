@@ -8,6 +8,9 @@
 # gonna put the project ID for each board in here
 window.boardNames = []
 
+# we have an arbitrary query for each board
+window.boardQueries = []
+
 # We are going to show the equivalent of a JIRA
 # board. Just like JIRA boards, each column can
 # group several statuses, so we model that in this array.
@@ -29,20 +32,25 @@ window.epicGroupsWithQuery = []
 # we ll have some asynchronous operations
 # going on soon so we want to keep track of
 # what state the client is in.
+window.STATE = null
 window.STATE_READY_FOR_NEW_EPIC_SELECTION = 0
 window.STATE_CREATING_EMPTY_BOARDS = 1
-window.STATE_WAITING_FOR_EPIC_QUERY_RESULTS = 2
+window.STATE_WAITING_FOR_EPIC_GROUP_QUERY_RESULTS = 2
 window.STATE_WAITING_FOR_TABLE_QUERIES_RESULTS = 3
 window.STATE_POPULATING_TABLES = 4
 
-window.STATE = STATE_READY_FOR_NEW_EPIC_SELECTION
+STATE = STATE_READY_FOR_NEW_EPIC_SELECTION
+
+window.epicGroupResults = null
+window.receivedBoardResults = null
 
 
-buildBoards = ->
+buildEmptyBoards = ->
 	for boardNumber in [0...boardNames.length]
 		theBoardName = boardNames[boardNumber]
 		console.log "adding board " + theBoardName
 		$( "#boards").append '<div id="board'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 1px dotted; margin: 3px;"> <div style = "background-color: #E0FFFF;">' + theBoardName + '</div> </br> </div>'
+		$( "#board"+theBoardName).append '<div id="spinner'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 1px dotted; margin: 3px;"> <img src="spinner.gif" height="42" width="42"> </br> </div>'
 		for columnNumber in [1...10]
 			console.log "adding column " + columnNumber + " to board " + theBoardName
 			$( "#board" + theBoardName).append '<div id="board'+theBoardName+'column'+columnNumber+'"  style="float: left; width:60px;"> </div>'
@@ -51,66 +59,82 @@ clearBoards = ->
 	$( "#boards").empty()
 	$( "#details").empty()
 
-window.updateBoard = (responseObject) ->
-	clearBoards()
-	buildBoards()
+window.updateBoard = (boardNumber, boardQueryResults) ->
+	console.log "updading board: " + boardNumber + " i.e. " + boardNames[boardNumber]
+
+	$( "#spinner" + boardNames[boardNumber]).remove()
+
+	receivedBoardResults++
+	boardQueryKeys = []
+
+	# group all the keys of this board
+	# results so we can intersect
+	# the epic group results with the board
+	# results in a moment
+	for boardQueryResult in boardQueryResults.result
+		boardQueryKeys.push boardQueryResult[1]
 	
-	console.log JSON.stringify responseObject
+	console.log JSON.stringify boardQueryResults
 
 	window.openInFrame = (theIssueKey) ->
 		$('#JIRAIframe').empty()
 		$('#JIRAIframe').append("<iframe width='100%' height='800' src='https://jira.shazamteam.net/browse/"+theIssueKey+"'></iframe>")
 
-	for boardNumber in [0...boardNames.length]
-		# add the header in each column, in bold
-		# telling which statuses are grouped in it
+	# add the header in each column, in bold
+	# telling which statuses are grouped in it
+	groupNumber = 0
+	for statusGroup in groupedStatuses[boardNumber]
+		groupNumber++
+		header = ""
+		for eachStatus in statusGroup
+			header = header + eachStatus + " "
+		$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<b>" + header + "<b>" )
+
+	# now add the issues in each column.
+	# for each issue in the result set, scan whether
+	# it belongs to the board, which group it
+	# belongs to, according to status, and
+	# place in the correct column.
+	# DEFINITELY not the most efficient way
+	# as we scan each issue as many times
+	# as there is a board.
+	# The good news is that would work also
+	# in case where the same issue would appear in more
+	# than one board.
+	# but it's not like we need to place hundreds
+	# of issues here, so it's OK
+	for i in window.epicGroupResults.result
+		issueKey = i[1]
+
+		# skip the placement of the issue "card"
+		# is the issue is not supposed to be in
+		# the board
+		if issueKey not in boardQueryKeys
+			console.log " issue " + issueKey + " is NOT in boardQueryKeys"
+			continue;
+		else
+			console.log " issue " + issueKey + " is in boardQueryKeys"
+
 		groupNumber = 0
 		for statusGroup in groupedStatuses[boardNumber]
 			groupNumber++
-			header = ""
-			for eachStatus in statusGroup
-				header = header + eachStatus + " "
-			$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<b>" + header + "<b>" )
+			if i[3] in statusGroup
+				# the javascript is just to have the issue details to open
+				# in a dedicated div to the right, cause the tiles are
+				# probably gonna get real small as we fit more boards
+				# in the page
 
-		# now add the issues in each column.
-		# for each issue in the result set, scan whether
-		# it belongs to the board, which group it
-		# belongs to, according to status, and
-		# place in the correct column.
-		# DEFINITELY not the most efficient way
-		# as we scan each issue as many times
-		# as there is a board.
-		# The good news is that would work also
-		# in case where the same issue would appear in more
-		# than one board.
-		# but it's not like we need to place hundreds
-		# of issues here, so it's OK
-		for i in responseObject.result
-			project = i[1].substring(0, 3)
-			console.log "project: " + project
-			if project != boardNames[boardNumber]
-				continue;
+				issueKey = i[1]
+				#console.log issueKey
+				onClickCode = "onclick= \"openInFrame('"+issueKey+"');\""
+				#console.log onClickCode
 
-			groupNumber = 0
-			for statusGroup in groupedStatuses[boardNumber]
-				groupNumber++
-				if i[3] in statusGroup
-					# the javascript is just to have the issue details to open
-					# in a dedicated div to the right, cause the tiles are
-					# probably gonna get real small as we fit more boards
-					# in the page
-
-					issueKey = i[1]
-					#console.log issueKey
-					onClickCode = "onclick= \"openInFrame('"+issueKey+"');\""
-					#console.log onClickCode
-
-					$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" " + onClickCode + " style='cursor: pointer; background-color: #DCDCDC; padding: 3px; margin: 3px;'>"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> " )
-
+				$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" " + onClickCode + " style='cursor: pointer; background-color: #DCDCDC; padding: 3px; margin: 3px;'>"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> " )
 
 
 window.makeEpicGroupQuery = (searchQuery) ->
 
+	console.log "making query: " + searchQuery
 	$.ajax
 		type: 'GET',
 		url: './search/something.json',
@@ -118,7 +142,38 @@ window.makeEpicGroupQuery = (searchQuery) ->
 		data: {'search':searchQuery},
 		success: (responseObject) ->
 			# debugger;
-			window.updateBoard(responseObject)
+			console.log "received epic group query result "
+			STATE = STATE_WAITING_FOR_EPIC_GROUP_QUERY_RESULTS
+			window.epicGroupResults = responseObject
+			window.issueAllBoardQueries()
+
+issueBoardQuery = (queryNumber, boardQuery) ->
+	$.ajax
+		type: 'GET',
+		url: './search/something.json',
+		dataType: 'jsonp',
+		data: {'search':boardQuery},
+		success: (boardQueryResults) ->
+			# debugger;
+			window.updateBoard(queryNumber, boardQueryResults)
+
+
+window.issueAllBoardQueries = () ->
+	
+	STATE = STATE_WAITING_FOR_EPIC_GROUP_QUERY_RESULTS
+	# we are going to count the number of responses
+	# we get so that we know when we are done
+	receivedBoardResults = 0
+
+	clearBoards()
+	buildEmptyBoards()
+
+	queryNumber = -1
+	for boardQuery in boardQueries
+		queryNumber++
+		console.log "issuing board query: " + boardQuery
+		issueBoardQuery(queryNumber, boardQuery)
+
 
 
 </script>
