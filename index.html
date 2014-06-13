@@ -44,25 +44,35 @@ STATE = STATE_READY_FOR_NEW_EPIC_SELECTION
 window.epicGroupResults = null
 window.receivedBoardResults = null
 
+# key: issuekey, value: all the data related to the issue
+# to check which issues have dependencies
+window.issuesOnTheBoard = []
+
+# key: issuekey, values: array with all the divs the issue is in
+# so to create the links with JSPlumb
+window.divsEachIssueIsIn = []
+
+
 
 buildEmptyBoards = ->
 	for boardNumber in [0...boardNames.length]
-		theBoardName = boardNames[boardNumber]
+		theBoardName = "board" + boardNumber + boardNames[boardNumber]
 		console.log "adding board " + theBoardName
-		$( "#boards").append '<div id="board'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 1px dotted; margin: 3px;"> <div style = "background-color: #E0FFFF;">' + theBoardName + '</div> </br> </div>'
-		$( "#board"+theBoardName).append '<div id="spinner'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 1px dotted; margin: 3px;"> <img src="spinner.gif" height="42" width="42"> </br> </div>'
+		$( "#boards").append '<div id="'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 1px dotted; margin: 3px;"> <div style = "background-color: #E0FFFF;">' + theBoardName + '</div> </br> </div>'
+		$( "#"+theBoardName).append '<div id="spinner'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 1px dotted; margin: 3px;"> <img src="spinner.gif" height="42" width="42"> </br> </div>'
 		for columnNumber in [1...10]
 			console.log "adding column " + columnNumber + " to board " + theBoardName
-			$( "#board" + theBoardName).append '<div id="board'+theBoardName+'column'+columnNumber+'"  style="float: left; width:60px;"> </div>'
+			$( "#" + theBoardName).append '<div id="'+theBoardName+'column'+columnNumber+'"  style="float: left; width:60px;"> </div>'
 
 clearBoards = ->
 	$( "#boards").empty()
 	$( "#details").empty()
 
 window.updateBoard = (boardNumber, boardQueryResults) ->
-	console.log "updading board: " + boardNumber + " i.e. " + boardNames[boardNumber]
+	theBoardName = "board" + boardNumber + boardNames[boardNumber]
+	console.log "updading board: " + boardNumber + " i.e. " + theBoardName
 
-	$( "#spinner" + boardNames[boardNumber]).remove()
+	$( "#spinner" + theBoardName).remove()
 
 	receivedBoardResults++
 	boardQueryKeys = []
@@ -88,7 +98,7 @@ window.updateBoard = (boardNumber, boardQueryResults) ->
 		header = ""
 		for eachStatus in statusGroup
 			header = header + eachStatus + " "
-		$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<b>" + header + "<b>" )
+		$( "#" + theBoardName + "column" + groupNumber ).append( "<b>" + header + "<b>" )
 
 	# now add the issues in each column.
 	# for each issue in the result set, scan whether
@@ -112,6 +122,11 @@ window.updateBoard = (boardNumber, boardQueryResults) ->
 		if issueKey not in boardQueryKeys
 			continue;
 
+		# the issue will be on the board somewhere
+
+		unless issueKey of window.issuesOnTheBoard
+			window.issuesOnTheBoard[issueKey] = i
+
 		groupNumber = 0
 		for statusGroup in groupedStatuses[boardNumber]
 			groupNumber++
@@ -126,7 +141,17 @@ window.updateBoard = (boardNumber, boardQueryResults) ->
 				onClickCode = "onclick= \"openInFrame('"+issueKey+"');\""
 				#console.log onClickCode
 
-				$( "#board" + boardNames[boardNumber] + "column" + groupNumber ).append( "<div onmouseover=\"$('#details').text( $(this).text() );\" " + onClickCode + " style='cursor: pointer; background-color: #DCDCDC; padding: 3px; margin: 3px;'>"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> " )
+				issueDivID = ( theBoardName + "column" + groupNumber + "issue" + issueKey)
+				console.log "issueDivID: " + issueDivID
+				$( "#" + theBoardName + "column" + groupNumber ).append( "<div id='" + issueDivID + "' onmouseover=\"$('#details').text( $(this).text() );\" " + onClickCode + " style='cursor: pointer; background-color: #DCDCDC; padding: 3px; margin: 3px;'>"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> " )
+				console.log "issue card added"
+
+				unless issueKey of window.divsEachIssueIsIn
+					window.divsEachIssueIsIn[issueKey]=[]
+
+				window.divsEachIssueIsIn[issueKey].push issueDivID 
+				console.log "window.divsEachIssueIsIn[issueKey]: " + window.divsEachIssueIsIn[issueKey]
+
 
 
 window.makeEpicGroupQuery = (searchQuery) ->
