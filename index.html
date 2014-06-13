@@ -52,13 +52,17 @@ window.issuesOnTheBoard = []
 # so to create the links with JSPlumb
 window.divsEachIssueIsIn = []
 
+sanitizeBoardName = (originalBoardName) ->
+	originalBoardName.replace(/[^a-z0-9]/gi, '_').toLowerCase()
 
+boardDivIdFromBoardNumber = (boardNumber) ->
+	"board" + boardNumber + sanitizeBoardName(boardNames[boardNumber])
 
 buildEmptyBoards = ->
 	for boardNumber in [0...boardNames.length]
-		theBoardName = "board" + boardNumber + boardNames[boardNumber]
+		theBoardName = boardDivIdFromBoardNumber boardNumber
 		console.log "adding board " + theBoardName
-		$( "#boards").append '<div id="'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 1px dotted; margin: 3px;"> <div style = "background-color: #E0FFFF;">' + theBoardName + '</div> </br> </div>'
+		$( "#boards").append '<div id="'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 1px dotted; margin: 3px;"> <div style = "background-color: #E0FFFF;">' + boardNames[boardNumber] + '</div> </br> </div>'
 		$( "#"+theBoardName).append '<div id="spinner'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 1px dotted; margin: 3px;"> <img src="spinner.gif" height="42" width="42"> </br> </div>'
 		for columnNumber in [1...10]
 			console.log "adding column " + columnNumber + " to board " + theBoardName
@@ -69,7 +73,7 @@ clearBoards = ->
 	$( "#details").empty()
 
 window.updateBoard = (boardNumber, boardQueryResults) ->
-	theBoardName = "board" + boardNumber + boardNames[boardNumber]
+	theBoardName = boardDivIdFromBoardNumber boardNumber
 	console.log "updading board: " + boardNumber + " i.e. " + theBoardName
 
 	$( "#spinner" + theBoardName).remove()

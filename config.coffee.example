@@ -4,18 +4,19 @@
 ## config.coffee
 
 
-epicGroupsWithQuery.push ['Epic group 1', '"Epic Link" = SRM-488 or "Epic Link" = SRM-499 or "Epic Link" = SRM-537']
-epicGroupsWithQuery.push ['Epic group 2', '"Epic Link" = SRM-567 or "Epic Link" = SRM-568 or "Epic Link" = SRM-536 or "Epic Link" = SRM-570']
-epicGroupsWithQuery.push ['Epic group 3', '"Epic Link" = SRM-291 or "Epic Link" = SRM-313']
-epicGroupsWithQuery.push ['Epic group 4', '"Epic Link" = SRM-491 or "Epic Link" = SRM-506']
-epicGroupsWithQuery.push ['Epic group 5', '"Epic Link" = SRM-463']
-epicGroupsWithQuery.push ['Epic group 6', '"Epic Link" = SRM-588 or "Epic Link" = SRM-586 or "Epic Link" = SRM-587']
-epicGroupsWithQuery.push ['Epic group 7', '"Epic Link" = SRM-591 or "Epic Link" = SRM-592']
+
+epicGroupsWithQuery.push ['Epig group 1', '"Epic Link" = SRM-488 or "Epic Link" = SRM-499 or "Epic Link" = SRM-537']
+epicGroupsWithQuery.push ['Epig group 2', '"Epic Link" = SRM-567 or "Epic Link" = SRM-568 or "Epic Link" = SRM-536 or "Epic Link" = SRM-570']
+epicGroupsWithQuery.push ['Epig group 3', '"Epic Link" = SRM-291 or "Epic Link" = SRM-313']
+epicGroupsWithQuery.push ['Epig group 4', '"Epic Link" = SRM-491 or "Epic Link" = SRM-506']
+epicGroupsWithQuery.push ['Epig group 5', '"Epic Link" = SRM-463']
+epicGroupsWithQuery.push ['Epig group 6', '"Epic Link" = SRM-588 or "Epic Link" = SRM-586 or "Epic Link" = SRM-587']
+epicGroupsWithQuery.push ['Epig group 7', '"Epic Link" = SRM-591 or "Epic Link" = SRM-592']
 
 
 
 
-boardNames.push 'SIO'
+boardNames.push 'Board 1'
 boardQueries.push 'Project = SIO and createdDate > -24w'
 groupedStatuses.push [
 	["Open"], # column 1
@@ -26,7 +27,7 @@ groupedStatuses.push [
 	["Resolved", "Closed"]
 ]
 
-boardNames.push 'SOA'
+boardNames.push 'Board 2'
 boardQueries.push 'Project = SOA and createdDate > -24w'
 groupedStatuses.push [
 	["Await Tech lead approval"], # column 1
@@ -39,7 +40,7 @@ groupedStatuses.push [
 	["Resolved", "Closed"]
 ]
 
-boardNames.push 'AMP'
+boardNames.push 'Board 3'
 boardQueries.push 'Project = AMP and createdDate > -24w'
 groupedStatuses.push [
 	["Awaiting Review", "Work Blocked"], # column 1
@@ -50,7 +51,21 @@ groupedStatuses.push [
 	["Resolved"]
 ]
 
-boardNames.push 'WPS'
+# This is the a duplicate of board 3
+# to see that the same issue can appear multiple
+# times.
+boardNames.push 'Board 4'
+boardQueries.push 'Project = AMP and createdDate > -24w'
+groupedStatuses.push [
+	["Awaiting Review", "Work Blocked"], # column 1
+	["Open", "Reopened"], # column 2
+	["Awaiting Development"], # ...
+	["In Progress"],
+	["Awaiting Testing", "In Testing", "Testing Blocked"],
+	["Resolved"]
+]
+
+boardNames.push 'Board 5'
 boardQueries.push 'Project = WPS and createdDate > -24w'
 groupedStatuses.push [
 	["Await Tech lead approval"], # column 1
@@ -68,7 +83,7 @@ groupedStatuses.push [
 	["Resolved", "Closed"]	
 ]
 
-boardNames.push 'SSP'
+boardNames.push 'Board 6'
 boardQueries.push 'Project = SSP and createdDate > -24w'
 groupedStatuses.push [
 	["Committed items"], # column 1
