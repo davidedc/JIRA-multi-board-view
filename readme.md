@@ -5,6 +5,7 @@ Could be useful for example to show how Epics are doing across several teams/pro
 Setup:
 - have Python installed (if you are on OSX you are sorted already)
 - install the "jira" library (usually "pip install jira")
+- install jsonpickle ("pip install -U jsonpickle")
 - add your own epic groups and queries in a config.coffee file (a template is provided in the config.coffee.example file)
 
 Usage:

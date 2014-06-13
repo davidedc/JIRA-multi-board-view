@@ -15,6 +15,11 @@ import sys
 # for sending the results as JSON to the page
 import json
 
+# some objects returnes from the API are
+# too complicated for simple json serialisation
+# this library sorts that out.
+import jsonpickle
+
 # to access JIRA
 from jira.client import JIRA
 
@@ -64,9 +69,11 @@ class Proxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.end_headers()
 
 			searchResults = jira.search_issues(search, maxResults=1000)
-			issuesData = [[ issue.fields.project.key, issue.key, issue.fields.summary, issue.fields.status.name] for issue in searchResults]
+			issuesData = [[ issue.fields.project.key, issue.key, issue.fields.summary, issue.fields.status.name, issue.fields.issuelinks] for issue in searchResults]
 
-			JSONOfIssues = json.dumps(issuesData)
+			#print "issue.fields.issuelinks: " + jsonpickle.encode(issue.fields.issuelinks)
+
+			JSONOfIssues = jsonpickle.encode(issuesData)
 
 			print "json: " +  JSONOfIssues
 
