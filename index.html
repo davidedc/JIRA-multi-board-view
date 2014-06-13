@@ -110,10 +110,7 @@ window.updateBoard = (boardNumber, boardQueryResults) ->
 		# is the issue is not supposed to be in
 		# the board
 		if issueKey not in boardQueryKeys
-			console.log " issue " + issueKey + " is NOT in boardQueryKeys"
 			continue;
-		else
-			console.log " issue " + issueKey + " is in boardQueryKeys"
 
 		groupNumber = 0
 		for statusGroup in groupedStatuses[boardNumber]
@@ -147,20 +144,26 @@ window.makeEpicGroupQuery = (searchQuery) ->
 			window.epicGroupResults = responseObject
 			window.issueAllBoardQueries()
 
-issueBoardQuery = (queryNumber, boardQuery) ->
+issueBoardQuery = (queryNumber) ->
 	$.ajax
 		type: 'GET',
 		url: './search/something.json',
 		dataType: 'jsonp',
-		data: {'search':boardQuery},
+		data: {'search':boardQueries[queryNumber]},
 		success: (boardQueryResults) ->
 			# debugger;
 			window.updateBoard(queryNumber, boardQueryResults)
+			
+			# doing one query at a time: do the next one
+			queryNumber++
+			if queryNumber < boardQueries.length
+				issueBoardQuery(queryNumber)
 
 
 window.issueAllBoardQueries = () ->
 	
 	STATE = STATE_WAITING_FOR_EPIC_GROUP_QUERY_RESULTS
+
 	# we are going to count the number of responses
 	# we get so that we know when we are done
 	receivedBoardResults = 0
@@ -168,11 +171,14 @@ window.issueAllBoardQueries = () ->
 	clearBoards()
 	buildEmptyBoards()
 
-	queryNumber = -1
-	for boardQuery in boardQueries
-		queryNumber++
-		console.log "issuing board query: " + boardQuery
-		issueBoardQuery(queryNumber, boardQuery)
+	# we assume there is at least one board :-)
+	issueBoardQuery(0)
+
+	#queryNumber = -1
+	#for boardQuery in boardQueries
+	#	queryNumber++
+	#	console.log "issuing board query: " + boardQuery
+	#	issueBoardQuery(queryNumber, boardQuery)
 
 
 
