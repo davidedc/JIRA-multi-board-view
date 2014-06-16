@@ -209,6 +209,7 @@ window.updateBoard = (boardNumber, boardQueryResults) ->
 window.makeEpicGroupQuery = (searchQuery) ->
 
 	console.log "making query: " + searchQuery
+	clearBoards()
 	$.ajax
 		type: 'GET',
 		url: './search/something.json',
@@ -219,7 +220,10 @@ window.makeEpicGroupQuery = (searchQuery) ->
 			console.log "received epic group query result "
 			STATE = STATE_WAITING_FOR_EPIC_GROUP_QUERY_RESULTS
 			window.epicGroupResults = responseObject
-			window.issueAllBoardQueries()
+			if window.epicGroupResults.result.length == 0
+				$( "#boards" ).append( "<b>No issues found.</b>" )
+			else
+				window.issueAllBoardQueries()
 
 issueBoardQuery = (queryNumber) ->
 	$.ajax
@@ -247,7 +251,6 @@ window.issueAllBoardQueries = () ->
 	# we get so that we know when we are done
 	receivedBoardResults = 0
 
-	clearBoards()
 	buildEmptyBoards()
 
 	# we assume there is at least one board :-)
