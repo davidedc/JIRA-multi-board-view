@@ -79,7 +79,7 @@ class Proxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 			self.wfile.write(callbackName + "({result: " + JSONOfIssues + "})")
 
-		elif ".html" in theFile or ".coffee" or ".gif" in theFile:
+		elif ".html" in theFile or ".coffee" or ".gif" or ".js" in theFile:
 			# next three lines only needed for Firefox
 			self.send_response(200)
 			self.send_header('Content-type','text/html')
