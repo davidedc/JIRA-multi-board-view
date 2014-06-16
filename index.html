@@ -49,6 +49,9 @@ window.receivedBoardResults = null
 
 # key: issuekey, value: all the data related to the issue
 # to check which issues have dependencies
+# note that this list is unique: issues are listed only once
+# no matter how many times the issue appears in any number
+# of boards.
 window.issuesOnTheBoard = []
 
 # key: issuekey, values: array with all the divs the issue is in
@@ -64,20 +67,62 @@ boardDivIdFromBoardNumber = (boardNumber) ->
 buildEmptyBoards = ->
 	for boardNumber in [0...boardNames.length]
 		theBoardName = boardDivIdFromBoardNumber boardNumber
-		console.log "adding board " + theBoardName
+		#console.log "adding board " + theBoardName
 		$( "#boards").append '<div id="'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 1px dotted; margin: 3px;"> <div style = "background-color: #E0FFFF;">' + boardNames[boardNumber] + '</div> </br> </div>'
 		$( "#"+theBoardName).append '<div id="spinner'+theBoardName+'" style="float: left; overflow: hidden; font-size:8px; border: 1px dotted; margin: 3px;"> <img src="spinner.gif" height="42" width="42"> </br> </div>'
 		for columnNumber in [1...10]
-			console.log "adding column " + columnNumber + " to board " + theBoardName
+			#console.log "adding column " + columnNumber + " to board " + theBoardName
 			$( "#" + theBoardName).append '<div id="'+theBoardName+'column'+columnNumber+'"  style="float: left; width:60px;"> </div>'
 
+showAllDependencies = ->
+	console.log "now showing all the dependencies"
+	for own key, issueOnTheBoard of issuesOnTheBoard
+		console.log "pre-listing all issues on board: " + key
+
+	for own key, issueOnTheBoard of issuesOnTheBoard
+		unless issueOnTheBoard[4]?
+			continue
+		issueKey = issueOnTheBoard[1]
+		console.log "checking issue: " + issueKey + " having " + (issueOnTheBoard[4].length) + " dependencies "
+		issueDependencies = issueOnTheBoard[4]
+		unless issueDependencies?
+			continue
+		for dependency in issueDependencies
+			unless dependency.outwardIssue?
+				continue
+			dependsOnIssue = dependency.outwardIssue.key
+			if issueKey of window.divsEachIssueIsIn
+				for dependencyFromDiv in window.divsEachIssueIsIn[issueKey]
+					if dependsOnIssue of window.divsEachIssueIsIn
+						for dependencyToDiv in window.divsEachIssueIsIn[dependsOnIssue]
+							console.log "drawing dependency from " + dependencyFromDiv + " to " + dependencyToDiv
+							jsPlumb.connect({
+								source: dependencyFromDiv,
+								target: dependencyToDiv,
+								overlays:[ 
+									[ "Arrow", { location:1, length:10, width:10} ], 
+									#[ "Label", { label:"needs", location:0.25, id:"myLabel" } ]
+								],
+								anchor:[ "Perimeter", { shape:"Rectangle" } ],
+								paintStyle:{ strokeStyle:"blue", lineWidth:2 },
+								connector:[ "Bezier", { curviness:10 } ],
+								endpointStyle:{ fillStyle:"blue", outlineColor:"black", outlineWidth:1, radius:2 },
+							});
+
+
+clearConnectors = ->
+	jsPlumb.detachEveryConnection()
+
 clearBoards = ->
+	clearConnectors()
+	window.issuesOnTheBoard = []
+	window.divsEachIssueIsIn = []
 	$( "#boards").empty()
 	$( "#details").empty()
 
 window.updateBoard = (boardNumber, boardQueryResults) ->
 	theBoardName = boardDivIdFromBoardNumber boardNumber
-	console.log "updading board: " + boardNumber + " i.e. " + theBoardName
+	#console.log "updating board: " + boardNumber + " i.e. " + theBoardName
 
 	$( "#spinner" + theBoardName).remove()
 
@@ -91,7 +136,7 @@ window.updateBoard = (boardNumber, boardQueryResults) ->
 	for boardQueryResult in boardQueryResults.result
 		boardQueryKeys.push boardQueryResult[1]
 	
-	console.log JSON.stringify boardQueryResults
+	#console.log JSON.stringify boardQueryResults
 
 	window.openInFrame = (theIssueKey) ->
 		$('#JIRAIframe').empty()
@@ -149,15 +194,15 @@ window.updateBoard = (boardNumber, boardQueryResults) ->
 				#console.log onClickCode
 
 				issueDivID = ( theBoardName + "column" + groupNumber + "issue" + issueKey)
-				console.log "issueDivID: " + issueDivID
+				#console.log "issueDivID: " + issueDivID
 				$( "#" + theBoardName + "column" + groupNumber ).append( "<div id='" + issueDivID + "' onmouseover=\"$('#details').text( $(this).text() );\" " + onClickCode + " style='cursor: pointer; background-color: #DCDCDC; padding: 3px; margin: 3px;'>"  + i[1]  + '<div style="font-size:2px" >' + i[2] + "</div> </div> " )
-				console.log "issue card added"
+				#console.log "issue card added"
 
 				unless issueKey of window.divsEachIssueIsIn
 					window.divsEachIssueIsIn[issueKey]=[]
 
 				window.divsEachIssueIsIn[issueKey].push issueDivID 
-				console.log "window.divsEachIssueIsIn[issueKey]: " + window.divsEachIssueIsIn[issueKey]
+				#console.log "window.divsEachIssueIsIn[issueKey]: " + window.divsEachIssueIsIn[issueKey]
 
 
 
@@ -190,6 +235,8 @@ issueBoardQuery = (queryNumber) ->
 			queryNumber++
 			if queryNumber < boardQueries.length
 				issueBoardQuery(queryNumber)
+			else
+				showAllDependencies()
 
 
 window.issueAllBoardQueries = () ->
