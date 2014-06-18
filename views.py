@@ -25,22 +25,35 @@ def main(request):
 
 def search(request):
     try:
-        epic_group_number = request.GET["epicGroupNumber"]
         jql = request.GET["search"]
         callback_name = request.GET["callback"]
     except KeyError:
        return HttpResponseBadRequest("some parameters missing")
     try:
-        search_results = JIRA.search_issues(jql, maxResults=500) 
+        search_results = JIRA.search_issues(jql, fields="project,summary,status,issuelinks", maxResults=500) 
     except JIRAError, e:
         logging.error("Error retrieving results " + str(e))
         search_results = []
-    issues_data = [
-        (issue.fields.project.key,
+    issues_data = [(
+        issue.fields.project.key,
         issue.key,
         issue.fields.summary,
-        issue.fields.status.name) for issue in search_results
-    ]
+        issue.fields.status.name,
+        [
+            {
+                'type':{
+                    'inward':issuelink.type.inward,
+                    'outward':issuelink.type.outward,
+                },
+                'inwardIssue':{
+                    'key':issuelink.inwardIssue.key,
+                } if hasattr(issuelink,'inwardIssue') else None,
+                'outwardIssue':{
+                    'key':issuelink.outwardIssue.key,
+                } if hasattr(issuelink, 'outwardIssue') else None, 
+            } for issuelink in issue.fields.issuelinks
+        ]
+    ) for issue in search_results]
     return HttpResponse(callback_name + "({result: " + json.dumps(issues_data) + "})")
 
 
@@ -50,6 +63,7 @@ def config(request):
         config += "epicGroupsWithQuery.push ['{0}', '{1}']\n".format(epic.name, epic.jql)
     for board in BoardDefinition.objects.all():
         config += "boardNames.push '{0}'\n".format(board.name)
+        config += "boardQueries.push '{0}'\n".format(board.jql)
         config += "groupedStatuses.push ["
         for column in board.statuses.split('|'):
             config += "["
@@ -58,3 +72,4 @@ def config(request):
             config += "],"
         config += "]\n"
     return HttpResponse(config, "text/coffeescript")
+
