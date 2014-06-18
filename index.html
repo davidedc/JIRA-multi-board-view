@@ -205,9 +205,11 @@ window.updateBoard = (boardNumber, boardQueryResults) ->
 				#console.log "window.divsEachIssueIsIn[issueKey]: " + window.divsEachIssueIsIn[issueKey]
 
 
+window.lastIssuedSearchQuery = "";
 
 window.makeEpicGroupQuery = (searchQuery) ->
 
+	window.lastIssuedSearchQuery = searchQuery
 	console.log "making query: " + searchQuery
 	clearBoards()
 	$.ajax
@@ -230,7 +232,7 @@ issueBoardQuery = (queryNumber) ->
 		type: 'GET',
 		url: './search/something.json',
 		dataType: 'jsonp',
-		data: {'search':boardQueries[queryNumber]},
+		data: {'search':"("+window.lastIssuedSearchQuery+") AND ("+boardQueries[queryNumber] + ")"},
 		success: (boardQueryResults) ->
 			# debugger;
 			window.updateBoard(queryNumber, boardQueryResults)
