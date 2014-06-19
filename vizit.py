@@ -15,11 +15,6 @@ import sys
 # for sending the results as JSON to the page
 import json
 
-# some objects returnes from the API are
-# too complicated for simple json serialisation
-# this library sorts that out.
-import jsonpickle
-
 # to access JIRA
 from jira.client import JIRA
 
@@ -68,12 +63,33 @@ class Proxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.send_header('Content-type','application/json')
 			self.end_headers()
 
-			searchResults = jira.search_issues(search, maxResults=1000)
-			issuesData = [[ issue.fields.project.key, issue.key, issue.fields.summary, issue.fields.status.name, issue.fields.issuelinks] for issue in searchResults]
+			#search_results = JIRA.search_issues(jql, fields="project,summary,status,issuelinks", maxResults=500)
+			search_results = jira.search_issues(search, fields="project,summary,status,issuelinks", maxResults=1000)
+			#jql_str, startAt=0, maxResults=50, fields=None, expand=None, json_result=None
+			issues_data = [(
+				issue.fields.project.key,
+				issue.key,
+				issue.fields.summary,
+				issue.fields.status.name,
+				[
+					{
+						'type':{
+							'inward':issuelink.type.inward,
+							'outward':issuelink.type.outward,
+						},
+						'inwardIssue':{
+							'key':issuelink.inwardIssue.key,
+						} if hasattr(issuelink,'inwardIssue') else None,
+						'outwardIssue':{
+							'key':issuelink.outwardIssue.key,
+						} if hasattr(issuelink, 'outwardIssue') else None, 
+					} for issuelink in issue.fields.issuelinks
+				]
+			) for issue in search_results]
 
 			#print "issue.fields.issuelinks: " + jsonpickle.encode(issue.fields.issuelinks)
 
-			JSONOfIssues = jsonpickle.encode(issuesData)
+			JSONOfIssues = json.dumps(issues_data)
 
 			print "json: " +  JSONOfIssues
 
