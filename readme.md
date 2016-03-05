@@ -5,6 +5,8 @@ Could be useful for example to show how Epics are doing across several teams/pro
 
 ![alt tag](https://raw.githubusercontent.com/davidedc/JIRA-multi-board-view/master/docs/multiboard_animation.gif)
 
+(see also my other JIRA-related projects [here](https://github.com/davidedc/JIRA-composable-command-line-tools) [here](https://github.com/davidedc/Customise-JIRA-Cards-Appearance) [here](https://github.com/davidedc/Basic-JIRA-And-Wiki-automation-with-Python-And-Mechanize) and [here](https://github.com/davidedc/QR-and-JIRA-check-in-check-out-system))
+
 ## Setup:
 - have Python installed (if you are on OSX you are sorted already)
 - install the "jira" library (usually "pip install jira")
